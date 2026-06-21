@@ -1,0 +1,45 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lilypond-version: [2.24.0, 2.26.0]
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v7
+
+    - name: Install LilyPond
+      run: |
+        wget --no-verbose https://gitlab.com/lilypond/lilypond/-/releases/v${{ matrix.lilypond-version }}/downloads/lilypond-${{ matrix.lilypond-version }}-linux-x86_64.tar.gz
+        tar -xf lilypond-${{ matrix.lilypond-version }}-linux-x86_64.tar.gz
+        echo "$(pwd)/lilypond-${{ matrix.lilypond-version }}/bin" >> $GITHUB_PATH
+
+    - name: Create PDFs
+      run: |
+        lilypond --output=test-${{ matrix.lilypond-version }} - <<EOS
+        \version "${{ matrix.lilypond-version }}"
+        \include "bow-positions.ily"
+        \pointAndClickOff
+        \new Staff="staff" <<
+          \new Bowing \with {
+            alignAboveContext = "staff"
+          } {
+            s1 \sulPont \> |
+            s2. \sulTasto \> s4 \ordinario |
+          }
+          {
+            g'1~ |
+            1 |
+          }
+        >>
+        EOS
+
+    - name: Archive PDFs
+      uses: actions/upload-artifact@main
+      with:
+        name: ${{ runner.os }} artifacts
+        path: '*.pdf'

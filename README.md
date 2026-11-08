@@ -19,7 +19,7 @@ lilypond --output=bow-positions --svg - <<EOS
 \new Staff="violin" <<
   \new Bowing \with {
     alignAboveContext = "violin"
-    \override DynamicTextSpanner.minimum-length = #12
+    \override DynamicTextSpanner.minimum-length = 12
   } {
     s1 \sulPont \> |
     s2. \sulTasto \> s4 \ordinario |

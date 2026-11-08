@@ -27,6 +27,7 @@ jobs:
         \new Staff="staff" <<
           \new Bowing \with {
             alignAboveContext = "staff"
+            \override DynamicTextSpanner.minimum-length = 12
           } {
             s1 \sulPont \> |
             s2. \sulTasto \> s4 \ordinario |
